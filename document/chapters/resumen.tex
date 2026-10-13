@@ -1,0 +1,11 @@
+\chapter*{Resumen}
+\addcontentsline{toc}{chapter}{Resumen}
+
+La conciliación entre los registros administrativos de pagos y las atenciones consignadas en las historias clínicas electrónicas (HCE) de la Clínica Dental Docente de la Universidad Peruana Cayetano Heredia requiere actualmente una revisión manual debido a las diferencias de estructura y nomenclatura entre ambas fuentes de información. El presente proyecto tiene como objetivo diseñar, implementar y evaluar un agente híbrido basado en automatización robótica de procesos (RPA) y un modelo de lenguaje grande (LLM), con validación humana, para apoyar este proceso de conciliación administrativa.
+
+El sistema utilizará RPA para identificar y recuperar la información necesaria de la HCE a partir de los registros administrativos, empleando los identificadores personales únicamente como llaves técnicas transitorias. Posteriormente, los datos serán codificados y los identificadores directos serán eliminados antes del análisis mediante el LLM. El modelo comparará semánticamente el tratamiento facturado con la atención registrada y generará una propuesta estructurada de correspondencia, acompañada de un nivel de confianza y una justificación. La decisión final permanecerá bajo responsabilidad de un operador humano.
+
+El desempeño del agente será evaluado respecto de una referencia de validación humana mediante precisión, sensibilidad, F1-score y matriz de confusión, además del tiempo de procesamiento y costo computacional por caso.
+
+\vspace{1.5em}
+\noindent \textbf{Palabras clave:} Conciliación administrativa, historias clínicas electrónicas, automatización robótica de procesos (RPA), modelos de lenguaje grande (LLM), validación humana.

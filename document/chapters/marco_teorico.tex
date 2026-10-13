@@ -1,0 +1,104 @@
+\label{ch:marco_teorico}
+El presente marco teórico establece los fundamentos administrativos, tecnológicos y de ingeniería de software necesarios para el diseño, implementación y validación del agente inteligente de conciliación semántica de pagos en la Clínica Dental Docente de la UPCH.
+
+\section{Dicotomía de la IA en Salud: Ámbito Asistencial vs. Administrativo}
+
+El despliegue de soluciones basadas en Inteligencia Artificial (IA) en el entorno clínico odontológico requiere trazar una línea clara entre los procesos que afectan la salud directa del paciente y aquellos orientados a la gestión operativa de la institución. Esta división define los niveles de riesgo, regulaciones éticas y los requisitos de tolerancia a fallos del sistema.
+
+El ámbito asistencial comprende todos los agentes dedicados al diagnóstico, triaje clínico inicial, pronóstico o sugerencia de tratamientos médicos. Debido a que operan con datos altamente sensibles de salud y sus decisiones inciden en el tratamiento directo del paciente, estos sistemas están sujetos a una regulación estricta. Un falso negativo o una alucinación diagnóstica en este nivel puede derivar en consecuencias graves para la integridad física del paciente, requiriendo validación médica en cada punto del flujo y auditorías de certificación clínica rigurosas.
+
+Por el contrario, el ámbito administrativo se enfoca en optimizar los procesos operativos, de facturación, conciliación de pagos y flujos financieros internos. En este entorno, los errores no representan un peligro clínico inmediato, sino ineficiencias operacionales que pueden corregirse fácilmente mediante la supervisión humana (sistemas \textit{Human-in-the-Loop}). La automatización en este nivel reduce la sobrecarga administrativa y el tiempo dedicado a tareas repetitivas de correspondencia de datos, constituyéndose en el entorno ideal para la implementación inicial de tecnologías basadas en modelos de lenguaje grandes (LLMs).
+
+\section{El Desafío de la Conciliación de Datos y Discrepancia Semántica}
+
+El cierre operativo diario de la Clínica Dental Docente de la UPCH enfrenta una desconexión entre la base de datos de transacciones financieras y el registro de la evolución clínica en las historias médicas. Los sistemas de facturación registran pagos bajo nomenclaturas estructuradas orientadas a la contabilidad (por ejemplo, "PROFILAXIS ADULTO" o "TRATAMIENTO ENDODÓNTICO MULTIRRADICULAR"). Por otro lado, los odontólogos en la práctica clínica registran sus actividades en lenguaje natural libre (por ejemplo, "se realiza pulido coronario y eliminación de placa blanda" o "tratamiento de conducto en pieza 14 con obturación definitiva").
+
+Esta discrepancia semántica impide realizar un cruce exacto de datos utilizando herramientas computacionales tradicionales. Los procesos basados en correspondencia exacta de cadenas de texto (\textit{string matching}) resultan ineficaces debido a la variabilidad gramatical, el uso de sinónimos clínicos, abreviaturas rápidas y errores tipográficos comunes cometidos durante la consulta. Por lo tanto, se hace indispensable contar con un mecanismo inteligente capaz de comprender la semántica del lenguaje odontológico para conciliar ambas fuentes de información.
+
+\section{Limitaciones de Búsqueda Vectorial (Embeddings) frente a Razonamiento (LLM)}
+
+Para abordar este problema, una aproximación económica inicial podría fundamentarse en modelos de embeddings vectoriales, calculando la distancia semántica (por ejemplo, mediante similitud de coseno) entre el concepto del pago y la descripción de la historia clínica. No obstante, las representaciones vectoriales estáticas presentan limitaciones insalvables para este escenario clínico-administrativo:
+
+\begin{itemize}
+    \item \textbf{Ceguera al Contexto Negativo:} Un modelo de embeddings otorgará una similitud matemática muy alta a los textos "se realiza endodoncia en la pieza 36" y "se evalúa realizar endodoncia en la pieza 36, pero se pospone por infección activa". El sistema de embeddings producirá un falso positivo, asumiendo erróneamente que el servicio pagado fue ejecutado.
+    \item \textbf{Carencia de Lógica Temporal y Relacional:} El emparejamiento requiere asociar el pago con procedimientos ejecutados dentro de una ventana temporal lógica y con detalles anatómicos específicos (nomenclatura de piezas dentales FDI). Los embeddings no razonan sobre reglas condicionales ni extraen relaciones complejas de causa y efecto en los textos evaluados.
+    \item \textbf{Falta de Explicabilidad:} Un simple índice numérico de similitud no le ofrece información útil al administrador del sistema. Si la IA decide que existe o no una correspondencia, el personal administrativo requiere una breve explicación lógica que valide esa decisión; de lo contrario, se verá forzado a reabrir la historia clínica para auditarla manualmente, anulando la eficiencia del sistema.
+\end{itemize}
+
+El uso de un modelo de lenguaje grande (LLM) supera estas limitaciones gracias a su capacidad de razonamiento contextual. El LLM puede interpretar la estructura gramatical y semántica completa, reconocer negaciones, relacionar tratamientos con sus componentes (por ejemplo, entender que la aplicación de resinas dentales es parte de una restauración estética) y redactar una justificación lógica que explique la correspondencia directamente en la pantalla del administrador.
+
+\section{Orquestación y Computación de Agentes de Conciliación}
+
+Para estructurar la lógica del sistema, se adopta un flujo de trabajo híbrido. Este enfoque permite combinar la rigidez de la automatización robótica de procesos (RPA) para la extracción de datos con la flexibilidad cognitiva del LLM para el análisis, implementando puntos de control humanos antes de realizar modificaciones definitivas en los registros.
+
+El estado del agente se define mediante un esquema estructurado que acumula la información de las bases de datos de pagos, las secciones relevantes de la historia clínica del paciente, las evaluaciones semánticas generadas y las decisiones administrativas del usuario supervisor. Para gestionar la concurrencia y mantener la consistencia de las métricas de rendimiento y costos acumulados durante la conciliación de lotes de datos, se utilizan funciones reductoras personalizadas.
+
+A nivel operativo, el flujo de trabajo del agente de conciliación semántica se organiza según la siguiente matriz de transiciones de estado:
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|p{3cm}|p{3cm}|p{4cm}|p{4cm}|}
+\hline
+\textbf{Nodo de Origen} & \textbf{Nodo de Destino} & \textbf{Condición de Transición} & \textbf{Mecanismo de Control} \\ \hline
+ExtraccionRPA & ConciliacionSemantica & Extracción de historial clínico a partir de la fecha de pago & Navegación automatizada del expediente del paciente \\ \hline
+ConciliacionSemantica & ValidacionHumana & Generación de propuesta de emparejamiento con justificación clínica & Punto de interrupción persistente (\texttt{interrupt\_before}) \\ \hline
+ValidacionHumana & ActualizacionBD & Confirmación o corrección por parte del personal administrativo & Escritura en base de datos contable \\ \hline
+ValidacionHumana & END & Rechazo explícito de la correspondencia propuesta & Registro de discrepancia y fin del flujo \\ \hline
+\end{tabular}
+\caption{Matriz de Transiciones de Estado del Agente de Conciliación Semántica}
+\label{tab:transiciones_estado}
+\end{table}
+
+
+
+\section{Optimización de Costos y Latencia en Inferencia Masiva}
+
+El análisis financiero para la implementación del agente inteligente en la Clínica Dental Docente de la UPCH requiere evaluar las alternativas de proveedores y modelos de lenguaje, optimizando el consumo de recursos computacionales. Asumiendo una carga mensual proyectada de $5,000$ conciliaciones complejas, y estimando un promedio por consulta de $2,000$ tokens de entrada (datos del pago, fragmento clínico y contexto del prompt de instrucciones) y $120$ tokens de salida (estructura JSON con la justificación), el flujo mensual acumula $10$ millones de tokens de entrada y $600,000$ tokens de salida.
+
+El uso de almacenamiento en caché para prompts (\textit{Prompt Caching}), disponible en modelos como DeepSeek y Gemini, permite reducir drásticamente el costo de inferencia al almacenar las directrices y esquemas JSON estáticos en memoria, cobrando una fracción de la tarifa de entrada regular por las lecturas de caché (hasta un 90\% de descuento). 
+
+A continuación se presenta un comparativo económico de los costos mensuales de procesamiento para el volumen proyectado bajo distintas infraestructuras de inferencia:
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|p{4cm}|p{2.5cm}|p{2.5cm}|p{3cm}|p{3cm}|}
+\hline
+\textbf{Modelo / Proveedor} & \textbf{Costo Entrada (por 1M)} & \textbf{Costo Salida (por 1M)} & \textbf{Prompt Caching} & \textbf{Costo Mensual Estimado} \\ \hline
+GPT-4o mini & \$0.150 & \$0.600 & No aplica & \$1.86 USD \\ \hline
+Gemini 1.5 Flash & \$0.075 & \$0.300 & Soportado (>50\%) & \$0.78 USD \\ \hline
+DeepSeek V3 & \$0.140 & \$0.280 & Soportado (80\% caché) & \$0.63 USD \\ \hline
+Modelo Local (Llama 3 8B) & N/A & N/A & N/A & Costo de hardware local \\ \hline
+\end{tabular}
+\caption{Matriz de Comparación Económica de Modelos de Lenguaje para Conciliación}
+\label{tab:costos_modelos}
+\end{table}
+
+Esta simulación económica demuestra que la implementación del agente es plenamente viable en términos de costos operativos recurrentes, permitiendo procesar el total de transacciones mensuales por montos menores a los \$2 USD al utilizar APIs de modelos optimizados.
+
+\section{Métricas de Evaluación de Modelos}
+
+Para validar experimentalmente la exactitud del agente de conciliación semántica frente a las auditorías manuales realizadas por los administradores humanos, se emplean las siguientes métricas de evaluación:
+
+\begin{itemize}
+    \item \textbf{Precisión y Sensibilidad (F1-Score):} Mide la exactitud en la clasificación binaria de coincidencias (match / no match) frente a un conjunto de datos previamente conciliado por humanos (\textit{ground truth}), penalizando tanto los falsos positivos (conciliaciones incorrectas) como los falsos negativos.
+    \item \textbf{Calidad de la Justificación (LLM-as-a-Judge):} Para evaluar la legibilidad y utilidad de las explicaciones generadas para el administrador, se utiliza un modelo de lenguaje de alta capacidad que califica las justificaciones del 1 al 10 basándose en su veracidad clínica y brevedad.
+    \item \textbf{Análisis de Latencia y Rendimiento en Lote:} Evaluación de los tiempos de procesamiento (\textit{Time-to-First-Token} y latencia total) bajo la técnica de procesamiento continuo por lotes (\textit{continuous batching}) para garantizar la respuesta ágil de la interfaz administrativa en horas punta.
+\end{itemize}
+
+\section{Viabilidad Económica, Costo de Oportunidad y Retorno de Inversión (ROI)}
+
+La justificación para la implementación de un agente de inteligencia artificial en la gestión administrativa de la Clínica Dental Docente de la UPCH no se limita a la mejora en los tiempos de ejecución, sino que debe sustentarse bajo los conceptos de eficiencia asimétrica y costo de oportunidad. En la gestión de salud, la trampa de inversión tecnológica ocurre cuando se adoptan herramientas de IA sin una reestructuración de los procesos, lo que incrementa los costos operativos en lugar de reducirlos. Por lo tanto, se analiza la viabilidad del agente bajo cuatro pilares económicos fundamentales:
+
+\subsection{La Matemática del Costo Operativo y Asimetría de Costos}
+El análisis comparativo directo entre el costo de la hora-hombre y el costo de inferencia por token revela una asimetría económica significativa. Bajo el método tradicional, un administrador requiere una jornada completa de ocho horas para auditar y conciliar aproximadamente 350 transacciones de pacientes. Considerando un sueldo administrativo base promedio de 1,500 soles peruanos mensuales, esta jornada de trabajo representa un costo operativo directo para la clínica de aproximadamente 50 soles (sin incluir beneficios de ley ni costos asociados a la infraestructura de oficina). En contraste, el procesamiento de estas mismas 350 transacciones utilizando el agente de IA basado en un modelo costo-efectivo (con un promedio de 500 tokens por evaluación, totalizando 175,000 tokens) representa un costo de API menor a 1 sol peruano (aproximadamente 0.25 USD). Esto demuestra que el costo de ejecución pura de la tarea de conciliación disminuye en más de un 98\% con la automatización.
+
+\subsection{Costo de Oportunidad y Reasignación de Recursos Humanos}
+La rentabilidad real del sistema no proviene del ahorro directo por token, sino de la transformación de horas dedicadas a tareas mecánicas de bajo valor en horas generadoras de ingresos. Al liberar la carga de auditoría manual de registros de conciliación del administrador, la clínica puede reasignar ese tiempo a tareas que requieren inteligencia social e interacción humana directa. Entre estas actividades se encuentran el seguimiento proactivo de presupuestos clínicos no cerrados, la gestión de cobranza y recuperación de deudas atrasadas, y el contacto directo para la fidelización y programación de chequeos preventivos. De este modo, el retorno de inversión se materializa al convertir al personal administrativo de un revisor de textos a un generador activo de valor comercial para la institución.
+
+\subsection{Mitigación de Pérdidas Financieras por Fatiga Humana}
+La conciliación manual de cientos de registros médicos y financieros en un entorno docente de alta demanda es propensa a fallas derivadas de la fatiga cognitiva o la ceguera de taller. Un auditor humano cansado puede aprobar involuntariamente conciliaciones incorrectas o rechazar registros válidos, lo que provoca fugas de capital y distorsiona el flujo de caja operativo. El agente inteligente mantiene un nivel constante de precisión en sus evaluaciones independientemente de la carga de trabajo y el volumen de registros. Al evitar la fuga financiera de un solo procedimiento de alto costo (como implantes o tratamientos de endodoncia compleja) debido a una mala conciliación, se amortiza inmediatamente el costo del software y su mantenimiento.
+
+\subsection{Escalabilidad Operativa con Costo Marginal Cercano a Cero}
+En modelos operativos tradicionales, un incremento en la demanda de atención de pacientes requiere de forma lineal el aumento de horas extras del personal o la contratación de auxiliares administrativos adicionales, elevando los costos fijos de la clínica. Bajo la arquitectura orientada a agentes de IA, el sistema presenta un comportamiento de costo marginal cercano a cero. Duplicar el número de conciliaciones de 350 a 700 solo incrementa el costo de consumo de tokens en la API de forma marginal (pasando de 1 sol a 2 soles), permitiendo que la estructura administrativa de la clínica absorba incrementos drásticos en la demanda de servicios sin necesidad de aumentar la nómina administrativa.

@@ -1,0 +1,88 @@
+\label{ch:introduccion}
+
+\section{Contexto del Estudio}
+
+La presente investigación se desarrolla en la Clínica Dental Docente de la Universidad Peruana Cayetano Heredia (UPCH), una institución de alta complejidad que maneja un volumen significativo de pacientes diarios. Esta dinámica genera un flujo constante y masivo de información que se divide fundamentalmente en dos frentes: el registro clínico de los tratamientos y el registro financiero de las transacciones.
+
+En el ecosistema clínico y hospitalario, la integración de agentes de Inteligencia Artificial (IA) debe abordarse comprendiendo la dicotomía de su aplicación, la cual se divide en dos dominios con niveles de riesgo y exigencia regulatoria diametralmente opuestos:
+
+\begin{description}
+    \item[El Ámbito Asistencial:] Comprende a los agentes que interactúan directa o indirectamente con el diagnóstico, pronóstico o tratamiento médico. Su implementación requiere la intervención obligatoria de un profesional de la salud y está sujeta a una rigurosidad extrema, dado que procesan datos médicos sensibles. Un error, una alucinación del modelo o un sesgo en este nivel tiene el potencial de perjudicar directamente la salud e integridad física del paciente.
+    \item[El Ámbito Administrativo:] Abarca los procesos operativos, logísticos y financieros de la clínica. La implementación de agentes de IA en este sector es considerablemente más ágil y viable, puesto que no requiere la intervención de personal médico y, lo más importante, las acciones automatizadas no impactan ni ponen en riesgo la salud del paciente. Los errores en este dominio representan ineficiencias procesales que pueden ser mitigadas mediante validación humana (sistemas \textit{Human-in-the-Loop}), haciendo que este entorno sea el escenario ideal para el despliegue inicial de tecnologías de IA generativa.
+\end{description}
+
+\section{Planteamiento del Problema}
+
+Dentro de la gestión operativa de la Clínica Dental Docente, existe un cuello de botella crítico en el proceso de auditoría y conciliación de servicios. Actualmente, la clínica opera con bases de datos disjuntas:
+
+\begin{enumerate}
+    \item \textbf{La Base de Datos de Pagos:} Registra la transacción financiera, indicando el servicio facturado y la fecha del pago.
+    \item \textbf{La Historia Clínica (Base de Datos Asistencial):} Contiene las notas de evolución, donde el odontólogo describe detalladamente el procedimiento ejecutado, los síntomas y el diagnóstico.
+\end{enumerate}
+
+El problema principal radica en la \textbf{discrepancia semántica}. La nomenclatura utilizada por el área de facturación rara vez coincide de forma exacta con la descripción narrativa y técnica que el personal médico ingresa en la historia clínica. Al no existir una llave unívoca o un estándar de redacción entre ambas bases, es imposible realizar una validación cruzada mediante métodos computacionales tradicionales (como consultas SQL o cruces exactos de variables).
+
+En consecuencia, el equipo de administración se ve obligado a realizar una validación manual, registro por registro. El personal debe leer el concepto del pago y luego sumergirse en la historia clínica del paciente, interpretando la jerga médica para confirmar si el procedimiento facturado realmente se llevó a cabo. Este proceso mecánico es ineficiente, susceptible al error humano por fatiga y consume una cantidad desproporcionada de horas administrativas.
+
+La falta de una herramienta que comprenda el contexto y la semántica del lenguaje natural impide automatizar esta conciliación, manteniendo una carga operativa elevada que retrasa los procesos de cierre financiero y auditoría interna de la clínica.
+
+\section{Pregunta de Investigación}
+
+A partir de la problemática descrita sobre la conciliación manual y la discrepancia semántica entre registros administrativos y asistenciales, se formula la siguiente pregunta de investigación:
+
+\begin{quote}
+\textbf{¿Cuál es el desempeño de un agente híbrido basado en automatización robótica de procesos (RPA) y un modelo de lenguaje grande (LLM), con validación humana, para apoyar la conciliación administrativa entre registros de pagos y atenciones registradas en historias clínicas electrónicas de la Clínica Dental Docente de la Universidad Peruana Cayetano Heredia?}
+\end{quote}
+
+A fin de operacionalizar rigurosamente la investigación, el desempeño será evaluado mediante la concordancia de las propuestas de conciliación del agente con la validación humana de referencia, utilizando métricas de precisión, sensibilidad (\textit{recall}), F1-score y matriz de confusión, así como mediante el tiempo de procesamiento y el costo computacional por caso.
+
+\subsection*{Hipótesis de Investigación}
+De manera complementaria, para efectos de contraste en el marco metodológico cuantitativo, se formula la siguiente hipótesis de investigación:
+\begin{quote}
+\textit{El uso de un agente híbrido RPA + LLM con validación humana permitirá realizar la conciliación administrativa de registros de pagos e historias clínicas electrónicas con una concordancia cuantificable respecto de la validación humana y con un menor tiempo de procesamiento que el procedimiento manual.}
+\end{quote}
+
+\section{Objetivos de la Investigación}
+
+\subsection{Objetivo General}
+
+Diseñar, implementar y evaluar un agente híbrido basado en RPA y LLM, con validación humana, para apoyar la conciliación administrativa entre registros de pagos y atenciones registradas en historias clínicas electrónicas de la Clínica Dental Docente de la Universidad Peruana Cayetano Heredia.
+
+\subsection{Objetivos Específicos}
+
+Para alcanzar el objetivo general propuesto, se establecen los siguientes objetivos específicos:
+
+\begin{enumerate}
+    \item \textbf{Definir e implementar el flujo de procesamiento y protección de datos} necesario para vincular los registros administrativos de pagos con los fragmentos correspondientes de las historias clínicas electrónicas, utilizando identificadores únicamente como llaves técnicas transitorias y generando posteriormente casos codificados para el análisis.
+    \item \textbf{Implementar un módulo de automatización RPA} que identifique los registros de pago pertinentes y recupere de la plataforma institucional los fragmentos mínimos de HCE necesarios para realizar la conciliación administrativa.
+    \item \textbf{Implementar un módulo basado en un LLM} que compare semánticamente el concepto administrativo facturado con la atención registrada en la HCE y genere una propuesta estructurada de correspondencia, acompañada de un nivel de confianza y una justificación.
+    \item \textbf{Establecer una referencia de validación humana} para los casos de conciliación, mediante la revisión, aprobación, corrección o rechazo de las correspondencias propuestas por el agente por parte de personal autorizado.
+    \item \textbf{Evaluar el desempeño del agente} frente a la referencia humana mediante precisión, sensibilidad, F1-score y matriz de confusión, y cuantificar su tiempo de procesamiento y costo computacional por caso.
+    \item \textbf{Comparar el tiempo requerido} por el proceso asistido por el agente con el procedimiento administrativo manual de conciliación, a fin de estimar su impacto sobre la eficiencia operativa.
+\end{enumerate}
+
+La Tabla~\ref{tab:objetivos_especificos} detalla la correspondencia de cada objetivo específico con su entregable y su aporte demostrable al desarrollo de la tesis.
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|c|p{7.3cm}|p{5.5cm}|}
+\hline
+\textbf{N.º} & \textbf{Objetivo Específico} & \textbf{Qué demuestra dentro de la tesis} \\ \hline
+\textbf{1} & Definir e implementar el flujo de procesamiento y protección de datos necesario para vincular los registros administrativos de pagos con los fragmentos correspondientes de las historias clínicas electrónicas, utilizando identificadores únicamente como llaves técnicas transitorias y generando posteriormente casos codificados para el análisis. & Explica cómo entran los datos y cómo se transita de información sensible al dataset de investigación disociado, garantizando el cumplimiento ético e institucional. \\ \hline
+\textbf{2} & Implementar un módulo de automatización RPA que identifique los registros de pago pertinentes y recupere de la plataforma institucional los fragmentos mínimos de HCE necesarios para realizar la conciliación administrativa. & Evalúa la parte mecánica del sistema: flujo de datos desde el archivo transaccional hacia la plataforma clínica Smile y la extracción del fragmento relevante. \\ \hline
+\textbf{3} & Implementar un módulo basado en un LLM que compare semánticamente el concepto administrativo facturado con la atención registrada en la HCE y genere una propuesta estructurada de correspondencia, acompañada de un nivel de confianza y una justificación. & Constituye el núcleo de inteligencia artificial de la tesis; produce una propuesta analítica interpretable sin atribuirle toma de decisión autónoma al modelo. \\ \hline
+\textbf{4} & Establecer una referencia de validación humana para los casos de conciliación, mediante la revisión, aprobación, corrección o rechazo de las correspondencias propuestas por el agente por parte de personal autorizado. & Construye el conjunto de datos de referencia (\textit{ground truth}), condición indispensable para contrastar formalmente el acierto o fallo del agente. \\ \hline
+\textbf{5} & Evaluar el desempeño del agente frente a la referencia humana mediante precisión, sensibilidad, F1-score y matriz de confusión, y cuantificar su tiempo de procesamiento y costo computacional por caso. & Responde directamente la pregunta de investigación y genera las evidencias cuantitativas principales del estudio. \\ \hline
+\textbf{6} & Comparar el tiempo requerido por el proceso asistido por el agente con el procedimiento administrativo manual de conciliación, a fin de estimar su impacto sobre la eficiencia operativa. & Permite contrastar de forma empírica la ganancia en eficiencia temporal respecto al procedimiento manual de referencia. \\ \hline
+\end{tabular}
+\caption{Objetivos específicos y componentes demostrables del proyecto}
+\label{tab:objetivos_especificos}
+\end{table}
+
+Esta estructura define una cadena metodológica directa y verificable:
+\begin{center}
+\textbf{Datos} $\longrightarrow$ \textbf{Extracción} $\longrightarrow$ \textbf{IA} $\longrightarrow$ \textbf{Humano} $\longrightarrow$ \textbf{Evaluación} $\longrightarrow$ \textbf{Impacto Operacional}
+\end{center}
+donde el primer objetivo produce el dataset codificado y flujo seguro; el segundo, el módulo RPA; el tercero, el módulo de correspondencia semántica (LLM); el cuarto, el \textit{ground truth}; el quinto, las métricas de exactitud y costo; y el sexto, la contrastación operativa final.
+

@@ -1,0 +1,70 @@
+\label{ch:metodologia}
+El presente capítulo detalla la metodología y la arquitectura tecnológica empleadas para el desarrollo, experimentación y evaluación del agente inteligente de conciliación semántica administrativa de la Clínica Dental Docente de la UPCH.
+
+\section{Enfoque, Tipo y Diseño de la Investigación}
+
+\subsection{Enfoque de la Investigación}
+Esta investigación posee un enfoque cuantitativo. Se basa en el análisis estadístico de métricas de precisión de emparejamiento, porcentajes de confianza, tiempos de procesamiento y costos operativos para evaluar de forma objetiva la viabilidad y eficacia del agente inteligente en comparación con el proceso manual actual.
+
+\subsection{Tipo de Investigación}
+La investigación es de tipo aplicada y de desarrollo tecnológico. Aplica tecnologías avanzadas de procesamiento de lenguaje natural y modelos de lenguaje grandes (LLMs) para automatizar un proceso contable y de auditoría crítico dentro de la gestión de la clínica.
+
+\subsection{Diseño de la Investigación}
+El diseño metodológico corresponde a un estudio experimental y de validación tecnológica. Se fundamenta en la construcción de un banco de pruebas (\textit{benchmark}) utilizando datos históricos reales anonimizados de transacciones financieras e historias clínicas para contrastar la precisión y calidad de las decisiones del agente frente a la auditoría experta humana.
+
+\subsection{Criterios de Inclusión y Exclusión}
+Para la selección y conformación de la muestra de registros administrativos sometidos al proceso de conciliación, se definen los siguientes criterios:
+
+\textbf{Criterios de inclusión:}
+\begin{itemize}
+    \item Registros administrativos pertenecientes al periodo de estudio.
+    \item Registros con código de paciente (\texttt{CODIGOPACIENTE}) válido.
+    \item Registros con fecha de emisión (\texttt{FECHA\_EMISION}) disponible.
+    \item Registros con descripción del servicio o tratamiento (\texttt{TRATAMIENTO}) disponible.
+    \item Registros que puedan ser vinculados técnicamente con la historia clínica electrónica (HCE) mediante los sistemas institucionales autorizados.
+\end{itemize}
+
+\textbf{Criterios de exclusión:}
+\begin{itemize}
+    \item Registros duplicados por errores técnicos de la base de datos de origen.
+    \item Registros anulados o revertidos, cuando dicha condición pueda ser identificada.
+    \item Registros con ausencia o inconsistencia de variables indispensables para realizar el cruce de información.
+    \item Registros que no correspondan a conceptos susceptibles de conciliación con una atención clínica.
+\end{itemize}
+
+Cabe precisar que no se excluye ningún registro por el mero hecho de no encontrar una atención clínica correspondiente en la HCE. La falta de correlación asistencial puede constituir una discrepancia real (\textit{NO MATCH} verdadero), por lo que dichos casos deben permanecer en la muestra para garantizar una evaluación no sesgada del desempeño del agente.
+
+\section{Arquitectura del Agente Inteligente de Conciliación}
+
+La arquitectura del agente está diseñada bajo un patrón de procesamiento secuencial controlado por estado que optimiza el flujo de información y minimiza el desperdicio de tokens. Consta de tres módulos operativos principales:
+
+\subsection{Módulo de Limpieza de Datos y Extracción RPA}
+Se encarga de procesar un archivo de cálculo (.xlsx) que contiene los datos de los pagos, aislando las variables clave (fecha, nombre, documento de identidad, sede y descripción del servicio). A continuación, un proceso mecanizado de automatización de navegador accede al sistema de la clínica para extraer la historia clínica del paciente. Para garantizar la eficiencia, la extracción inicia estrictamente a partir de la fecha de pago registrada, operando bajo la premisa lógica de que un tratamiento clínico no se ejecuta antes de ser abonado. Este fragmento extraído conforma el contexto final para el análisis de la inteligencia artificial.
+
+\subsection{Módulo de Emparejamiento Semántico y Razonamiento}
+Toma los datos del pago facturado (servicio y monto) y el extracto temporal de la historia clínica. Mediante un prompt estructurado y el uso de decodificación constreñida, el modelo de lenguaje analiza semánticamente si el procedimiento descrito por el odontólogo corresponde clínicamente al concepto facturado. La salida de este módulo es un objeto estructurado en formato JSON que contiene una variable booleana de coincidencia, un porcentaje estimado de confianza y una justificación redactada de máximo tres líneas de longitud.
+
+\subsection{Módulo de Interfaz y Validación Humana (Human-in-the-Loop)}
+Detiene la ejecución del flujo y guarda el estado del sistema en la persistencia local. Presenta la propuesta de conciliación en el panel del administrador, mostrando el pago original, el fragmento de la historia clínica asociado, el veredicto del agente, el porcentaje de confianza y la justificación. El administrador puede aprobar la conciliación con un solo clic o realizar correcciones manuales en caso de discrepancias, tras lo cual se desbloquea el flujo para registrar el cierre definitivo en la base de datos de facturación.
+
+\section{Pipeline de Experimentación y Benchmarking}
+
+Para determinar empíricamente el modelo de lenguaje más adecuado y costo-efectivo para la clínica, se define un procedimiento de experimentación y evaluación estructurado en las siguientes fases:
+
+\subsection{Establecimiento de la Referencia Humana (Ground Truth)}
+El estándar de referencia (\textit{ground truth}) contra el cual se evaluará el desempeño del agente inteligente es determinado por un evaluador humano autorizado. Para cada caso de conciliación administrativa incluido en el estudio, el evaluador revisa el registro administrativo y la información correspondiente de la HCE, clasificando el caso de forma dicotómica como \textit{MATCH} o \textit{NO MATCH}.
+
+Esta clasificación humana constituye la referencia oficial frente a la cual se comparan posteriormente las predicciones emitidas por el modelo de IA. Con el propósito de prevenir sesgos de confirmación o anclaje, la referencia humana empleada para evaluar científicamente al agente se establece a ciegas, es decir, sin mostrar previamente al evaluador la predicción del LLM. Es fundamental no confundir este estándar de referencia para la evaluación científica con el esquema operativo \textit{Human-in-the-Loop} descrito en la arquitectura del sistema: mientras que en el flujo operativo en producción el administrador supervisa las propuestas de la IA para aprobarlas, corregirlas o rechazarlas, en la evaluación científica la referencia humana se determina de forma previa e independiente a la respuesta del agente.
+
+\subsection{Procedimiento Experimental de Benchmarking}
+Sobre la muestra de casos seleccionados según los criterios de elegibilidad, se realiza el procesamiento secuencial a través de diversos modelos de lenguaje de diferentes capacidades y proveedores (comerciales, económicos y de código abierto). Cada modelo procesa los casos bajo condiciones uniformes de contexto disociado y parámetros de inferencia, generando la clasificación (\textit{MATCH} o \textit{NO MATCH}), el nivel de confianza y la justificación administrativa correspondiente.
+
+\subsection{Plan de Análisis}
+La evaluación del agente inteligente se realiza mediante el contraste cuantitativo de su desempeño frente al estándar de referencia humano y la medición de su eficiencia operacional:
+
+\begin{itemize}
+    \item \textbf{Evaluación de clasificación:} Para cada caso se comparará la clasificación del agente (\textit{MATCH} o \textit{NO MATCH}) contra el \textit{ground truth} humano. A partir de ello, se construirá una matriz de confusión y se calcularán la precisión (\textit{precision}), sensibilidad (\textit{recall}) y el valor \textit{F1-score}.
+    \item \textbf{Tiempo de procesamiento por caso:} Se registrará el tiempo total de procesamiento computacional por caso durante la ejecución automatizada.
+    \item \textbf{Costo computacional por caso:} Se registrará el costo computacional por caso a partir del consumo de tokens y tarifas de inferencia de los modelos evaluados.
+    \item \textbf{Comparación con el procedimiento manual:} Se comparará el tiempo del proceso asistido por el agente con el tiempo requerido por el procedimiento manual de conciliación administrativa, con el propósito de evaluar el impacto en la eficiencia operativa.
+\end{itemize}

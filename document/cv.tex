@@ -1,0 +1,134 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{xcolor}
+
+\geometry{a4paper, margin=1.8cm}
+
+% Configuración de colores
+\definecolor{primary}{HTML}{1A365D} % Azul oscuro profesional
+\definecolor{text}{HTML}{2D3748} % Gris oscuro
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=primary,
+    filecolor=primary,      
+    urlcolor=primary,
+    pdftitle={CV - José Huaylinos Guerrero},
+    pdfauthor={José Huaylinos Guerrero}
+}
+
+% Comandos personalizados para secciones limpias y compatibles con ATS
+\newcommand{\mysection}[1]{%
+    \vspace{0.3cm}
+    \noindent{\large\bfseries\color{primary} #1}\par
+    \vspace{0.1cm}
+    {\color{primary}\hrule height 0.8pt}\par
+    \vspace{0.2cm}
+}
+
+% Entorno personalizado para listas muy compactas y sin dependencias externas
+\newenvironment{myitemize}{
+  \begin{itemize}
+    \setlength{\itemsep}{2pt}
+    \setlength{\parskip}{0pt}
+    \setlength{\parsep}{0pt}
+    \setlength{\topsep}{2pt}
+}{
+  \end{itemize}
+}
+
+\begin{document}
+\pagestyle{empty}
+
+% 1. Encabezado simple (sin tablas, sin headers ocultos)
+\begin{center}
+    {\Huge\bfseries\color{primary} José Huaylinos Guerrero} \\
+    \vspace{0.1cm}
+    {\color{text} Lima, Perú \ | \ Celular: 980677728 \ | \ \href{mailto:jhg.04998@gmail.com}{jhg.04998@gmail.com}} \\
+    {\color{text} LinkedIn: \href{https://www.linkedin.com/in/jose-huaylinos/}{linkedin.com/in/jose-huaylinos} \ | \ GitHub: \href{https://github.com/joseston}{github.com/joseston}}
+\end{center}
+
+\vspace{0.1cm}
+
+% 2. Título profesional alineado al puesto
+\begin{center}
+    {\large\bfseries\color{primary} Data \& Business Intelligence Analyst | Healthcare Analytics | KPI Automation | AI-Assisted Analytics}
+\end{center}
+
+\vspace{0.1cm}
+
+% 3. Resumen profesional
+\mysection{Resumen Profesional}
+Analista de Datos y Consultor de Negocios con más de 4 años de experiencia en el sector salud, especializado en automatización de KPIs, dashboards ejecutivos, análisis financiero-comercial y desarrollo de plataformas analíticas para clínicas privadas. Experiencia integrando datos de consultas, facturación, tickets promedio, productividad médica, farmacia y convenios para convertir información operativa en decisiones gerenciales. Perfil híbrido entre análisis de negocio, data analytics y desarrollo de soluciones internas.
+
+% 4. Habilidades
+\mysection{Skills y Habilidades}
+
+\noindent \textbf{Skills Técnicos} \\
+SQL \textperiodcentered\ Python \textperiodcentered\ Power BI \textperiodcentered\ Excel avanzado \textperiodcentered\ ETL \textperiodcentered\ Modelamiento de datos \textperiodcentered\ Automatización de reportes
+
+\vspace{0.2cm}
+\noindent \textbf{Business \& Analytics} \\
+KPIs operativos \textperiodcentered\ Análisis financiero-comercial \textperiodcentered\ Productividad médica \textperiodcentered\ Facturación \textperiodcentered\ Ticket promedio \textperiodcentered\ Convenios \textperiodcentered\ Dashboards ejecutivos
+
+\vspace{0.2cm}
+\noindent \textbf{Software \& Sistemas} \\
+Desarrollo de plataformas analíticas \textperiodcentered\ Integración de agentes conversacionales \textperiodcentered\ Linux \textperiodcentered\ VPS \textperiodcentered\ Despliegue en producción
+
+% 5. Experiencia profesional
+\mysection{Experiencia Profesional}
+
+\noindent \textbf{Consultoría Independiente de Datos y Sistemas} \hfill Lima, Perú \\
+\textit{Consultor de Negocios y Analista de Datos} \hfill Febrero 2024 -- Presente
+\begin{myitemize}
+    \item Diseño e implementación de soluciones analíticas para clínicas privadas, integrando información de consultas, facturación, farmacia, productividad médica y metas comerciales.
+    \item Desarrollo de dashboards ejecutivos en Power BI para seguimiento mensual de KPIs, variaciones de ingresos, tickets promedio, convenios y rendimiento por especialidad.
+    \item Automatización de reportes operativos y comerciales, reduciendo el procesamiento manual de información y mejorando la disponibilidad de indicadores para gerencia.
+    \item Desarrollo de plataformas internas en producción para digitalizar registros clínico-comerciales, controlar ventas de farmacia y centralizar análisis de gestión.
+    \item Integración de agentes conversacionales con datos operativos para facilitar consultas internas sobre métricas, reportes y desempeño.
+\end{myitemize}
+
+\vspace{0.2cm}
+\noindent \textbf{Proyectos / Clientes}
+\begin{myitemize}
+    \item \textbf{Clínica Javier Prado:} Automatización del modelamiento de datos comerciales en Power BI, estructurando información de consultas, facturación y productividad médica para apoyar decisiones gerenciales y seguimiento de crecimiento anual.
+    \item \textbf{Centro de Investigación en Diabetes, Obesidad y Nutrición:} Desarrollo de plataforma analítica propia para gestión de farmacia y consultas, integrando indicadores operativos and un agente conversacional para consulta de métricas internas.
+    \item \textbf{Clínica Integral Avanzada de Tratamiento de Obesidades:} Implementación de sistema de control de ventas de farmacia y registro de consultas médicas, unificando información clínica y comercial en tableros de control.
+\end{myitemize}
+
+\vspace{0.4cm}
+
+\noindent \textbf{Red de Clínicas San Pablo} \hfill Lima, Perú \\
+\textit{Analista de Negocios} \hfill Enero 2023 -- Septiembre 2023
+\begin{myitemize}
+    \item Diseñé dashboards de KPIs para análisis de consultas, tickets promedio, aseguradoras, productividad médica e ingresos por unidad de negocio.
+    \item Elaboré reportes ejecutivos mensuales para gerencia, identificando variaciones comerciales y operativas relevantes para la toma de decisiones.
+    \item Integré información de múltiples fuentes para facilitar el seguimiento de desempeño por especialidad, médico, aseguradora y periodo.
+    \item Apoyé el análisis de indicadores comerciales vinculados a facturación, convenios y comportamiento de la demanda asistencial.
+\end{myitemize}
+
+\vspace{0.2cm}
+
+\noindent \textbf{Red de Clínicas San Pablo} \hfill Lima, Perú \\
+\textit{Clinical Data Analyst} \hfill 2022 -- Enero 2023
+\begin{myitemize}
+    \item Automaticé reportes de productividad médica y facturación clínica utilizando Python, Excel y Power BI.
+    \item Reduje tiempos de procesamiento manual mediante flujos de análisis automatizados para reportes gerenciales.
+    \item Estandaricé información operativa para mejorar el control de indicadores clínicos, financieros y comerciales.
+\end{myitemize}
+
+% 6. Educación
+\mysection{Educación}
+
+\noindent \textbf{Pontificia Universidad Católica del Perú (PUCP)} \\
+\textbf{Universidad Peruana Cayetano Heredia (UPCH)} \hfill Lima, Perú \\
+\textit{Bachiller en Ingeniería Biomédica} \hfill 2020 - 2025
+
+% 7. Idiomas
+\mysection{Idiomas}
+\noindent \textbf{Español:} Nativo \ | \ \textbf{Inglés:} Avanzado
+
+\end{document}

@@ -1,0 +1,140 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{xurl}
+\usepackage{microtype}
+\usepackage{hyperref}
+
+\geometry{top=2cm, bottom=2cm, left=2.5cm, right=2.5cm}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.7em}
+
+\definecolor{jsonbg}{gray}{0.95}
+
+\lstset{
+  backgroundcolor=\color{jsonbg},
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{black!20}
+}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue
+}
+
+\begin{document}
+
+\begin{center}
+\includegraphics[width=2.5cm]{isotipo.jpg}\\[0.3cm]
+\textbf{\Large Anexo: Protocolo de Manejo de Datos, Confidencialidad y Uso Controlado de LLMs}
+\end{center}
+
+\vspace{0.3cm}
+
+\renewcommand{\arraystretch}{1.3}
+\begin{table}[h!]
+\centering
+\begin{tabular}{|p{4.5cm}|p{10cm}|}
+\hline
+\textbf{Título del Proyecto} & Diseño e implementación de un agente de inteligencia artificial para la conciliación administrativa de pagos e historias clínicas electrónicas en la Clínica Dental Docente UPCH. \\ \hline
+\textbf{Egresado} & José Huaylinos Guerrero \\ \hline
+\textbf{Clasificación} & Riesgo mínimo: uso secundario de datos, sin contacto con pacientes, con datos disociados antes del análisis. \\ \hline
+\textbf{Alcance tecnológico} & Automatización administrativa y conciliación semántica. No realiza diagnóstico, pronóstico, prescripción ni recomendación terapéutica. \\ \hline
+\end{tabular}
+\end{table}
+
+\vspace{0.3cm}
+
+\section*{1. Finalidad y justificación}
+El presente proyecto tiene una naturaleza administrativa y tecnológica. Su objetivo es evaluar la precisión de un agente inteligente para conciliar registros de ingresos o facturación con los tratamientos registrados en la Historia Clínica Electrónica (HCE) de la Clínica Dental Docente UPCH. El sistema no sustituye el juicio clínico, no emite diagnósticos, no propone tratamientos y no modifica decisiones asistenciales; únicamente apoya una tarea administrativa repetitiva de verificación y conciliación documental.
+
+Al tratarse de un estudio retrospectivo basado en registros históricos, sin intervención directa sobre pacientes ni contacto con ellos, resulta impracticable solicitar el consentimiento informado individual de cada paciente. Por ello, se justifica solicitar la exoneración del consentimiento informado, siempre que el tratamiento de la información se realice bajo principios de minimización, disociación, confidencialidad y seguridad.
+
+El uso de modelos de lenguaje de gran escala (LLMs) se limita a una función de inferencia semántica sobre fragmentos administrativos y clínicos mínimos previamente disociados. Dichos modelos no serán entrenados, reentrenados ni ajustados con los datos del estudio.
+
+\section*{2. Protocolo de extracción en dos fases}
+
+\subsection*{Fase 1: Extracción segura in situ}
+La recolección inicial de datos se realizará exclusivamente dentro del ambiente institucional autorizado de la Clínica Dental Docente. En esta fase temporal, los identificadores directos, como DNI o número de HCE, podrán ser utilizados por el sistema automatizado únicamente como llave técnica de búsqueda para ubicar la historia clínica correspondiente al registro de pago.
+
+Esta fase no tiene como finalidad almacenar, analizar ni transferir identificadores directos al entorno de investigación. Su finalidad es exclusivamente operativa: permitir el cruce inicial entre el registro administrativo de pago y la fuente documental clínica correspondiente.
+
+\subsection*{Fase 2: Anonimización y codificación irreversible}
+Inmediatamente después de ubicar la coincidencia, el sistema extraerá solo el fragmento estrictamente necesario para la conciliación administrativa, por ejemplo, la descripción del tratamiento o procedimiento relacionado. Antes de que la información sea almacenada, analizada o procesada por el módulo de IA, todos los identificadores directos serán eliminados.
+
+Los nombres, DNI, teléfonos, correos electrónicos, direcciones, números de historia clínica y cualquier otro dato directamente identificable serán excluidos del dataset final. Cada registro será reemplazado por un código interno no reversible, por ejemplo CASO\_001, CASO\_002 o equivalente. El investigador trabajará únicamente con el dataset disociado.
+
+\section*{3. Uso controlado de LLMs externos mediante OpenRouter}
+El proyecto podrá utilizar OpenRouter como pasarela técnica para acceder a modelos de lenguaje de distintos proveedores. En este contexto, OpenRouter se empleará únicamente como servicio de inferencia: el sistema enviará una entrada textual mínima, recibirá una respuesta estructurada y no realizará entrenamiento ni fine-tuning con los datos procesados.
+
+Para reducir el riesgo de uso indebido de los datos, el sistema se configurará para enrutar solicitudes únicamente hacia proveedores y endpoints cuya política indique que no recolectan los datos de entrada para entrenamiento y, cuando sea posible, que cumplen Zero Data Retention (ZDR). En términos operativos, se utilizarán controles de proveedor equivalentes a:
+
+\begin{lstlisting}
+"provider": {
+  "data_collection": "deny",
+  "zdr": true
+}
+\end{lstlisting}
+
+La opción \texttt{data\_collection = deny} permite excluir proveedores que puedan almacenar datos de forma no transitoria o utilizarlos para entrenamiento. La opción \texttt{zdr = true} restringe el enrutamiento a endpoints con política de retención cero, es decir, endpoints que no almacenan prompts ni respuestas después de procesar la solicitud.
+
+Adicionalmente, no se habilitará el registro de entradas y salidas completas (input/output logging) en OpenRouter ni se activarán opciones de contribución de datos, evaluación, feedback o entrenamiento. En caso de que no exista un proveedor o endpoint que cumpla las restricciones de privacidad configuradas, la solicitud no será enviada al LLM y el caso será derivado a revisión manual o procesamiento local.
+
+\section*{4. Minimización de datos antes del envío al LLM}
+No se enviará al LLM la historia clínica completa ni el archivo administrativo completo. Cada solicitud incluirá únicamente los campos mínimos necesarios para evaluar la posible correspondencia entre un pago y un tratamiento registrado. El contenido enviado al LLM deberá estar previamente disociado y no contendrá identificadores directos.
+
+Los campos permitidos en una solicitud al LLM serán, como máximo:
+\begin{itemize}
+    \item Código interno no reversible del caso, por ejemplo CASO\_001.
+    \item Fecha relativa o periodo de atención, cuando sea necesario para la conciliación.
+    \item Concepto administrativo del pago y monto, si el monto es necesario para el análisis de correspondencia.
+    \item Fragmento clínico mínimo referido al tratamiento o procedimiento, sin nombres ni identificadores.
+    \item Instrucción de clasificación: match, posible match, no match o revisión humana.
+\end{itemize}
+
+Los campos prohibidos en una solicitud al LLM incluyen nombres, DNI, número de HCE, teléfono, correo electrónico, dirección, imágenes clínicas, documentos completos, consentimientos, odontogramas completos o cualquier dato no necesario para la conciliación administrativa.
+
+\section*{5. Almacenamiento y seguridad}
+El dataset final consolidado para el análisis de métricas estará disociado de la identidad de los pacientes. Los archivos serán almacenados en entornos locales cifrados bajo la custodia exclusiva del investigador. Las llaves temporales utilizadas para la extracción serán destruidas después de generar la codificación final.
+
+Ningún dato sensible o no anonimizado será enviado a servidores externos. El eventual procesamiento mediante LLMs externos se limitará a fragmentos mínimos ya disociados, bajo configuración restrictiva de proveedor y sin habilitar entrenamiento, fine-tuning, logging de contenido o retención de datos cuando se encuentre disponible una modalidad ZDR.
+
+Los resultados generados por el LLM se almacenarán únicamente como salidas técnicas asociadas al código interno del caso, por ejemplo: categoría de coincidencia, nivel de confianza y breve justificación administrativa. Dichos resultados no tendrán valor clínico ni serán utilizados para modificar la atención del paciente.
+
+\section*{6. Revisión humana y control de errores}
+El agente de IA funcionará bajo un esquema \textit{human-in-the-loop}. Los casos clasificados como ambiguos, de baja confianza o inconsistentes serán derivados a revisión humana por personal autorizado. El sistema no tomará decisiones administrativas finales de forma autónoma sin validación cuando exista incertidumbre.
+
+La evaluación del proyecto se enfocará en métricas técnicas y administrativas, tales como precisión, sensibilidad, especificidad, concordancia con la etiqueta humana y reducción del tiempo de conciliación. No se evaluarán desenlaces clínicos ni se realizarán inferencias sobre la salud de los pacientes.
+
+\section*{7. Fuentes técnicas de respaldo sobre privacidad de proveedores LLM}
+Las políticas específicas de privacidad y retención pueden variar por proveedor, modelo y endpoint. Por ello, el proyecto no asumirá que todos los proveedores cumplen automáticamente la misma política. Solo se utilizarán proveedores/endpoints cuya política vigente permita sostener que los datos enviados no serán usados para entrenamiento del modelo del proveedor y que cumplan, cuando sea posible, con retención cero.
+
+Fuentes institucionales consultadas:
+\begin{itemize}
+    \item OpenRouter - Zero Data Retention: \url{https://openrouter.ai/docs/guides/features/zdr}
+    \item OpenRouter - Provider Routing / Data Policies: \url{https://openrouter.ai/docs/guides/routing/provider-selection}
+    \item OpenRouter - Provider Logging and Data Retention: \url{https://openrouter.ai/docs/guides/privacy/provider-logging}
+    \item OpenAI - How your data is used to improve model performance: \url{https://help.openai.com/en/articles/5722486-how-your-data-is-used-to-improve-model-performance}
+    \item Anthropic - Is my data used for model training?: \url{https://privacy.anthropic.com/en/articles/7996868-is-my-data-used-for-model-training}
+    \item Google - Gemini API Additional Terms of Service: \url{https://ai.google.dev/gemini-api/terms}
+    \item Mistral AI - Privacy and data controls: \url{https://docs.mistral.ai/admin/monitor-comply/privacy-data-controls}
+\end{itemize}
+
+\vspace{1cm}
+
+\begin{center}
+\rule{8cm}{0.4pt}\\
+\textbf{José Huaylinos Guerrero}\\
+Investigador Principal
+\end{center}
+
+\end{document}

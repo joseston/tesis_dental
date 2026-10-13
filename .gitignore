@@ -1,0 +1,15 @@
+# TeX / LaTeX auxiliary files
+*.aux
+*.log
+*.toc
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.out
+*.synctex.gz
+
+# Lock files and temporary files
+.~lock.*
+*.tmp
+*~
